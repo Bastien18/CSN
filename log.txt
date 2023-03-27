@@ -1,0 +1,68 @@
+do ../run_comp_calcul_fcts_tb.tcl
+# QuestaSim-64 vmap 2020.1_1 Lib Mapping Utility 2020.03 Mar  4 2020
+# vmap work work 
+# Copying /opt/mentor/questasim/linux_x86_64/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# ** Warning: (vlib-34) Library already exists at "work".
+# QuestaSim-64 vmap 2020.1_1 Lib Mapping Utility 2020.03 Mar  4 2020
+# vmap work work 
+# Modifying modelsim.ini
+# QuestaSim-64 vcom 2020.1_1 Compiler 2020.03 Mar  4 2020
+# Start time: 17:32:10 on Mar 27,2023
+# vcom -reportprogress 300 -work work ../src/addn.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity addn
+# -- Compiling architecture comportement of addn
+# End time: 17:32:10 on Mar 27,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# QuestaSim-64 vcom 2020.1_1 Compiler 2020.03 Mar  4 2020
+# Start time: 17:32:10 on Mar 27,2023
+# vcom -reportprogress 300 -work work ../src/calcul_fcts_top.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity calcul_fcts_top
+# -- Compiling architecture struct of calcul_fcts_top
+# -- Loading entity addn
+# End time: 17:32:10 on Mar 27,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# QuestaSim-64 vcom 2020.1_1 Compiler 2020.03 Mar  4 2020
+# Start time: 17:32:10 on Mar 27,2023
+# vcom -reportprogress 300 -work work ../src_tb/calcul_fcts_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity calcul_fcts_tb
+# -- Compiling architecture test_bench of calcul_fcts_tb
+# -- Loading entity calcul_fcts_top
+# End time: 17:32:10 on Mar 27,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -voptargs=""+acc"" work.calcul_fcts_tb 
+# Start time: 17:32:10 on Mar 27,2023
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.calcul_fcts_tb(test_bench)#1
+# Loading work.calcul_fcts_top(struct)#1
+# Loading work.addn(comportement)#1
+# Loading work.addn(comportement)#2
+# Loading work.addn(comportement)#3
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /calcul_fcts_tb
+# ** Note: Debut de la simulation pour le calculateur du cours SYSLOG2/CSN-2023
+#    Time: 0 ns  Iteration: 0  Instance: /calcul_fcts_tb
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 3  Instance: /calcul_fcts_tb
+# ** Note: Fin de la simulation ! Observez le log pour voir si vous avez des erreurs
+#    Time: 200500 ns  Iteration: 0  Instance: /calcul_fcts_tb
+# ** Note: end of verification process
+#    Time: 201 us  Iteration: 1  Instance: /calcul_fcts_tb
+# ** Note: Error detected : 0
+#    Time: 201 us  Iteration: 1  Instance: /calcul_fcts_tb
