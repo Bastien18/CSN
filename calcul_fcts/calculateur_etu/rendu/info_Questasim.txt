@@ -1,0 +1,9 @@
+Info sur configuration de Questasim:
+===================================
+
+-Suppression des messages de la librairie "numeric_std", soit:
+   Menu: Simulate -> Runtime Option <enter>
+         Dans la zone "Suppress Warnings:" cocher la case "From IEEE Numeric Std Pakage
+         puis Apply, puis OK
+         
+EMI, 24 mars 2016

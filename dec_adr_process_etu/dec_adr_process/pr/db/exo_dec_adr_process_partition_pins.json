@@ -1,0 +1,93 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "cs_rom_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_ram_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_flash_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_io_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_leds_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_switch_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_matrice_led_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_capt_analog_o",
+					"strict" : false
+				},
+				{
+					"name" : "cs_cmd_moteur_o",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[13]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[14]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[12]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[15]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[8]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[9]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[10]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[11]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[7]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[6]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[4]",
+					"strict" : false
+				},
+				{
+					"name" : "adr_i[5]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

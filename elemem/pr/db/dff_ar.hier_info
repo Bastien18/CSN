@@ -1,0 +1,8 @@
+|dff_ar
+clk_i => Q_s.CLK
+reset_i => Q_s.ACLR
+D_i => Q_s.DATAIN
+Q_o <= Q_s.DB_MAX_OUTPUT_PORT_TYPE
+nQ_o <= Q_s.DB_MAX_OUTPUT_PORT_TYPE
+
+
