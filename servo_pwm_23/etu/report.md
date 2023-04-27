@@ -1,7 +1,5 @@
 
-| Inputs | Outputs | Commentaires |
-| ------ | ------- | ------------ |
-| mode_i | down_i | up_i | center_i | reg_pres | reg_fut | / |
+| mode_i | down_i | up_i | center_i | reg_pres | reg_fut | Commentaires |
 | ------ | ------ | ---- | -------- | -------- | ------- | ------------ |
 | '-' | '-' | '-' | 1 | '-' | =1499 | Fixation pos. centrale |
 | '-' | '-' | '-' | '-' | < 999 ou > 1999 | =1499 | Pos. centrale si hors limite |
