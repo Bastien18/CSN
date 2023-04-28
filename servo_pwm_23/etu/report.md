@@ -70,6 +70,22 @@ Le laboratoire est décomposé en deux parties. Dans la première partie il s’
 
 ## Première partie: Gestion de la création du PWM
 
+Pour générer un PWM, voici les fonctions nécessaires:
+
+- asynchrone: Reset
+
+- synchrone&nbsp;: Un compteur de la période du PWM
+
+- synchrone&nbsp;: Un élément mémoire pour le compteur précédent
+
+- synchrone&nbsp;: Un rebouclement du compteur, une fois arrivé à la fin de période du PWM (charge 0)
+
+- synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie du PWM, soit à '1', soit à '0'.
+
+Contrairement à ce qu'il sera vu pour la gestion de position
+
+Cette liste peut alors être traduite, sous une forme de table de fonctions synchrones (dans ce cas, équivalent au décodeur d'états futurs) 
+
 ## Deuxième partie: Gestion de la position
 
 Blablabla...
