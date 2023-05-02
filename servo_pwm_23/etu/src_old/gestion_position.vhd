@@ -40,9 +40,9 @@ end entity gestion_position;
 architecture logic of gestion_position is
 
     -- TO COMPLETE: Signals declaration
-    signal Q_pres_s, Q_fut_s, add_1_s, sub_1_s, mode_select_s, going_up_s, manual_mode_s : std_logic_vector(10 downto 0);
+    signal Q_pres_s, Q_fut_s, add_1_s, sub_1_s, mode_auto_s, mode_manu_s, going_up_s, going_down_s : std_logic_vector(10 downto 0);
     
-    signal det_min_s, det_max_s, det_out_range_s, center_s, enable_count_s, hold_value_s : std_logic;
+    signal det_min_s, det_max_s, det_out_range_s, enable_count_s : std_logic;
 
     signal count_value_s    : unsigned(10 downto 0);
 
@@ -55,33 +55,35 @@ begin
 
     -- TO COMPLETE: Calculate position
     -- Intern signal to enable the flipflop during max Ton of the pwm
-    enable_count_s  <=  top_2ms_i;
+    enable_count_s <= top_2ms_i;
 
-    det_max_s       <=  '1' when count_value_s = COUNT_MAX else '0';
-    det_min_s       <=  '1' when count_value_s = COUNT_MIN else '0';
-    det_out_range_s <=  '1' when (count_value_s < COUNT_MIN OR count_value_s > COUNT_MAX) else '0';
+    count_value_s   <= unsigned(Q_pres_s);
+    add_1_s         <= std_logic_vector(count_value_s + 1);
+    sub_1_s         <= std_logic_vector(count_value_s - 1);
 
-    count_value_s   <=  unsigned(Q_pres_s);
-    add_1_s         <=  std_logic_vector(count_value_s + 1);
-    sub_1_s         <=  std_logic_vector(count_value_s - 1);
+    det_max_s       <= '1' when count_value_s = COUNT_MAX else '0';
+    det_min_s       <= '1' when count_value_s = COUNT_MIN else '0';
+    det_out_range_s <= '1' when (count_value_s < COUNT_MIN OR count_value_s > COUNT_MAX) else '0';
 
-    center_s        <=  det_out_range_s or center_i;
-    hold_value_s    <=  (up_i and det_max_s) or (down_i and det_min_s);
-    
     -- Decoder of futur state
-    going_up_s      <=  std_logic_vector(COUNT_MIN) when det_max_s = '1' else
+    -- Incremental/decremental signal 
+    going_up_s      <=  std_logic_vector(COUNT_MAX) when det_max_s = '1' else
                         add_1_s;
 
-    manual_mode_s   <=  Q_pres_s when hold_value_s = '1' else
-                        add_1_s when up_i = '1' else 
-                        sub_1_s when down_i = '1' else
+    going_down_s    <=  std_logic_vector(COUNT_MIN) when det_min_s = '1' else 
+                        sub_1_s;
+
+    -- Auto mode decomposition
+    mode_auto_s     <=  std_logic_vector(COUNT_MIN) when det_max_s = '1' else
+                        add_1_s;
+
+    mode_manu_s     <=  going_up_s when up_i = '1' else
+                        going_down_s when down_i = '1' else 
                         Q_pres_s;
 
-    mode_select_s   <=  going_up_s when mode_i = '1' else 
-                        manual_mode_s;
-
-    Q_fut_s         <=  std_logic_vector(COUNT_MID) when center_s = '1' else
-                        mode_select_s;
+    Q_fut_s         <=  std_logic_vector(COUNT_MID) when (center_i = '1' OR det_out_range_s = '1') else
+                        mode_auto_s when mode_i = '1' else
+                        mode_manu_s;
 
     -- Process of a enabled flipflop
     process(reset_i, clock_i)
