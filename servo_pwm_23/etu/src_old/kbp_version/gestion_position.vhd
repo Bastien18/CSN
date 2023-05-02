@@ -4,13 +4,13 @@
 --
 -- Fichier      : top_gen.vhd
 --
--- Description  : Gère le duty cycle du signal PWM en fonction de l'état des
---                  entrées
+-- Description  : Gï¿½re le duty cycle du signal PWM en fonction de l'ï¿½tat des
+--                  entrï¿½es
 -- Auteur       : Anthony I. Jaccard
 -- Date         : 31.03.2023
 -- Version      : 1.0
 -- 
--- Utilise      : Laboratoire sur les systèmes séquentiels simples
+-- Utilise      : Laboratoire sur les systï¿½mes sï¿½quentiels simples
 -- 
 --| Modifications |------------------------------------------------------------
 -- Vers.  Qui   Date         Description
@@ -49,7 +49,7 @@ architecture logic of gestion_position is
 
     signal center_out_limits_s   : std_logic;
     signal manual_limits_hold_s  : std_logic;
-    signal tmp_s                 : std_logic_vector(position'range);
+    signal loop_auto_mode_s      : std_logic_vector(position'range);
 
     --| Components |------------------------------------------------------------
     component addn is
@@ -83,12 +83,12 @@ begin
     center_out_limits_s  <= center_i or lesser_than_999_s or greater_than_1999_s;
     manual_limits_hold_s <= (up_i and equal_to_1999_s) or (down_i and equal_to_999_s);
 
-    tmp_s <= std_logic_vector(to_unsigned(999, tmp_s'length)) when equal_to_1999_s = '1' else
+    loop_auto_mode_s <= std_logic_vector(to_unsigned(999, loop_auto_mode_s'length)) when equal_to_1999_s = '1' else
              reg_plus_one_s;
 
-    reg_fut_s <= reg_pres_s                       when top_2ms_i = '1'            else
+    reg_fut_s <= reg_pres_s                       when top_2ms_i = '0'            else
                  std_logic_vector(to_unsigned(1499, reg_fut_s'length)) when center_out_limits_s = '1' else
-                 tmp_s                            when mode_i = '1'               else
+                 loop_auto_mode_s                            when mode_i = '1'               else
                  reg_pres_s                       when manual_limits_hold_s = '1' else
                  reg_plus_one_s;
 
