@@ -35,7 +35,8 @@ entity servo_pwm_top is
         center_i    : in std_logic;
         -- Outputs
         pwm_o       : out std_logic;
-        top_2ms_o     : out std_logic
+        --top_2ms_o   : out std_logic
+        top_2ms     : out std_logic
     );
 end entity servo_pwm_top;
 
@@ -142,6 +143,7 @@ begin
     pos_ext_s(pos_s'range) <= pos_s(pos_s'range);
     pos_ext_s(pos_ext_s'left downto pos_s'length) <= (others => '0');
 
-    top_2ms_o <= top_2ms_s;
+    --top_2ms_o <= top_2ms_s;
+    top_2ms <= top_2ms_s;
 
 end architecture;
