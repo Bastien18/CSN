@@ -167,6 +167,26 @@ On peut donc coupler ces états et terminer avec la table suivante:
 
 # Simulation
 
+# Intégration/Mesure
+
+## Angle maximale
+
+![meas_t_up_2.0ms](pics/meas_Tup_2.0ms.jpg)
+
+![meas_period_2.0ms](pics/meas_period_2.0ms.jpg)
+
+## Angle milieu
+
+![meas_t_up_1.5ms](pics/meas_Tup_1.5ms.jpg)
+
+![meas_period_1.5ms](pics/meas_period_1.5ms.jpg)
+
+## Angle minimale
+
+![meas_t_up_1.0ms](pics/meas_Tup_1.0ms.jpg)
+
+![meas_period_1.0ms](pics/meas_period_1.0ms.jpg)
+
 # Conclusion
 
 \raggedleft
