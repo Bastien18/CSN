@@ -69,13 +69,13 @@ Le laboratoire est décomposé en deux parties. Dans la première partie il s’
 
 Un PWM est un signal carré de période fixe, à rapport cyclique changeant. Pour réaliser ce genre de signal, l'on se base sur un signal triangulaire (ou en dent de scie, dans le cas présent) et on le compare avec un signal de contrôle.
 
-Voici un exemple:
+Voici une démonstration:
 
 ![pwm_behavior](pics/pwm_behavior.png)
 
 ### Comportement du servo
 
-Dans le cadre de ce laboratoire, le PWM du servo. fonctionne selon ces informations:
+Dans le cadre de ce laboratoire, le PWM du servo fonctionne selon ces informations:
 
 \center
 
@@ -105,15 +105,27 @@ Pour générer un PWM, voici les fonctions nécessaires:
 
 - synchrone&nbsp;: Un élément mémoire pour le compteur précédent
 
-- synchrone&nbsp;: Un rebouclement du compteur, une fois arrivé à la fin de période du PWM, soit la valeur de 20'000 (chargement à 0)
+- synchrone&nbsp;: Un rebouclement de ce compteur (chargement à 0)
 
-- synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie du PWM, soit à '1', soit à '0'.
+- synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie pwm_o, soit à '1', soit à '0'.
 
-Contrairement à ce qu'il sera vu pour la gestion de position ... Je sais plus ce que je voulais dire iciiiiiii ...
+<!--Contrairement à ce qu'il sera vu pour la gestion de position ... Je sais plus ce que je voulais dire iciiiiiii ...-->
 
-Cette liste peut alors être traduite, sous une forme de table de fonctions synchrones (dans ce cas, équivalent au décodeur d'états futurs):
+Selon cette liste, on voit que la table de fonctions synchrones ne peut faire intervenir que les éléments liés au comtpeur. Car l'entrée **seuil_i** et la sortie **pwm.o** sont régies par la règle:
 
+```python
+pwm_o = '1' if cpt_period <= seul_i else '0'
+```
 
+qui permet de générer le PWM.
+
+On obtient alors le décodeur d'états futurs du compteur:
+
+| top_1MHz_i | cpt_period | cpt_fut_period | Commentaires |
+| :--------: | ---------: | :------------- | :----------- |
+| 0 | - | =cpt_period | =Maintien des valeurs |
+| 1 | =19999 | =0 | Rebouclement de la période |
+| 1 | / | =cpt_period+1 | Incrémentation du compteur |
 
 ## Deuxième partie: Gestion de la position
 
