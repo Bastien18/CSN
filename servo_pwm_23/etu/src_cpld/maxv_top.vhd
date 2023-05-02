@@ -88,7 +88,7 @@ architecture struct of maxv_top is
         center_i    : in std_logic;
         -- Outputs
         pwm_o       : out std_logic;
-        top_2ms     : out std_logic;
+        top_2ms_o   : out std_logic;
         --Sync
         clock_i     : in std_logic;
         nReset_i    : in std_logic
@@ -140,7 +140,7 @@ begin
       mode_i      => Switch_i(0),
       center_i    => Button_s(2),
       pwm_o       => Mezzanine_DO_s(5),
-      top_2ms     => Con_25p_DO_s(1),
+      top_2ms_o   => Con_25p_DO_s(1),
       clock_i     => Clk_Gen_i,
       nReset_i    => nReset_i
   ); 
