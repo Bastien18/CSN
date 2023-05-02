@@ -11,7 +11,6 @@ Département: **TIC**
 
 Unité d'enseignement: **CSN**
 
-
 \hfill\break
 
 \hfill\break
@@ -54,21 +53,49 @@ Date:
 
 # Introduction
 
-Le but de ce laboratoire est de réaliser un système qui pilote un servo-moteur, sur commande par PWM (Pulse Width Modulation).
+Le but de ce laboratoire est de réaliser un système qui pilote un servo-moteur (abrégé *servo* pour le reste du rapport), sur commande par PWM (Pulse Width Modulation).
 
 ## Objectif
 
-L’objectif de ce laboratoire est de concevoir, développer, simuler et tester un contrôleur de servo-moteur, sous la forme d’un système séquentiel simple.
+Les objectifs sont de concevoir, développer, simuler et tester un contrôleur de servo-moteur, sous la forme d’un système séquentiel simple.
 
 Le système utilise le principe d’un PWM ("Pulse Width Modulation" ou "modulation à largeur d’impulsion") qui permet de transmettre une information analogique via un signal binaire. Ce signal PWM est responsable de la transmission de la consigne de position au servo.
 
-Le laboratoire est décomposé en deux parties. Dans la première partie il s’agit de générer un signal PWM à l’aide d’un compteur en "dent de scie" et d’une comparaison (plus d’explications dans la section "Partie 1"). Dans la deuxième partie il s’agit de gérer la position courante du servo selon le mode de fonctionnement et l’état des signaux de commande (voir la section "Partie 2").
+Le laboratoire est décomposé en deux parties. Dans la première partie il s’agit de générer un signal PWM à l’aide d’un compteur en "dent de scie" et d’une comparaison (plus d’explications dans la section "Première partie: Création du PWM"). Dans la deuxième partie il s’agit de gérer la position courante du servo, selon le mode de fonctionnement et l’état des signaux de commande (voir la section "Deuxième partie: Gestion de la position").
 
 ## Spécification
+
+### PWM: Pulse Width Modulation
+
+Un PWM est un signal carré de période fixe, à rapport cyclique changeant. Pour réaliser ce genre de signal, l'on se base sur un signal triangulaire (ou en dent de scie, dans le cas présent) et on le compare avec un signal de contrôle.
+
+Voici un exemple:
+
+![pwm_behavior](pics/pwm_behavior.png)
+
+### Comportement du servo
+
+Dans le cadre de ce laboratoire, le PWM du servo. fonctionne selon ces informations:
+
+\center
+
+![servo_behavior_lab_sheet](pics/servo_behavior_from_lab_sheet.png){ width=70% }
+
+\raggedright
+
+\pagebreak
 
 # Analyse
 
 ## Première partie: Gestion de la création du PWM
+
+Soit le bloc de cette partie représentée par:
+
+\center
+
+![schema_bloc_part_pwm](pics/pwm_schem_bloc.png){ width=70% }
+
+\raggedright
 
 Pour générer un PWM, voici les fonctions nécessaires:
 
@@ -78,17 +105,25 @@ Pour générer un PWM, voici les fonctions nécessaires:
 
 - synchrone&nbsp;: Un élément mémoire pour le compteur précédent
 
-- synchrone&nbsp;: Un rebouclement du compteur, une fois arrivé à la fin de période du PWM (charge 0)
+- synchrone&nbsp;: Un rebouclement du compteur, une fois arrivé à la fin de période du PWM, soit la valeur de 20'000 (chargement à 0)
 
 - synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie du PWM, soit à '1', soit à '0'.
 
-Contrairement à ce qu'il sera vu pour la gestion de position
+Contrairement à ce qu'il sera vu pour la gestion de position ... Je sais plus ce que je voulais dire iciiiiiii ...
 
-Cette liste peut alors être traduite, sous une forme de table de fonctions synchrones (dans ce cas, équivalent au décodeur d'états futurs) 
+Cette liste peut alors être traduite, sous une forme de table de fonctions synchrones (dans ce cas, équivalent au décodeur d'états futurs):
+
+
 
 ## Deuxième partie: Gestion de la position
 
 Blablabla...
+
+\center
+
+![schema_bloc_part_pwm](pics/pos_schem_bloc.png){ width=70% }
+
+\raggedright
 
 Voici la table de fonctions synchrones:
 
