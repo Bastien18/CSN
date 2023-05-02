@@ -7,7 +7,7 @@ add wave -noupdate /servo_pwm_tb/dut/up_i
 add wave -noupdate /servo_pwm_tb/dut/center_i
 add wave -noupdate /servo_pwm_tb/dut/mode_i
 add wave -noupdate /servo_pwm_tb/dut/pwm_o
-add wave -noupdate /servo_pwm_tb/dut/top_2ms
+add wave -noupdate /servo_pwm_tb/dut/top_2ms_o
 add wave -noupdate /servo_pwm_tb/reference_ref.curr_duty
 add wave -noupdate /servo_pwm_tb/skip_verif_pwm_s
 
