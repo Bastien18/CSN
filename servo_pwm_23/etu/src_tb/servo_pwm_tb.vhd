@@ -43,7 +43,7 @@ architecture test_bench of servo_pwm_tb is
         center_i    : in std_logic;
         -- Outputs
         pwm_o       : out std_logic;
-        top_2ms     : out std_logic;
+        top_2ms_o   : out std_logic;
         --Sync
         clock_i     : in std_logic;
         nReset_i    : in std_logic
@@ -89,7 +89,7 @@ architecture test_bench of servo_pwm_tb is
     --signaux d'observation 
     type observed_t is record
         pwm_o       : std_logic;
-        top_2ms     : std_logic;
+        top_2ms_o   : std_logic;
     end record;
 
     --signaux de reference
@@ -551,7 +551,7 @@ begin
         mode_i      => stimulus_sti.mode_i,
         center_i    => stimulus_sti.center_i,
         pwm_o       => observed_obs.pwm_o,
-        top_2ms     => observed_obs.top_2ms,
+        top_2ms_o   => observed_obs.top_2ms_o,
         clock_i     => clock_s,
         nReset_i    => nReset_s
     ); 
@@ -568,11 +568,11 @@ begin
                     "pwm_o",
                     valid_s, 
                     skip_verif_pwm_s);
-    check_frequency(observed_obs.top_2ms, 
+    check_frequency(observed_obs.top_2ms_o, 
                     PERIOD_TOP_MIN,
                     PERIOD_TOP_MAX,
                     sim_end_s, 
-                    "top_2ms", 
+                    "top_2ms_o", 
                     valid_s,
                     skip_verif_top_s);
 
@@ -610,23 +610,23 @@ begin
         cycle(2);
         reset_s <= '0';
 
-        -- Verification du top_2ms
+        -- Verification du top_2ms_o
         skip_verif_top_s <= '0';
         wait for 20 ms / TOP_SPEED_FAC;
 
         if nbr_err_v = 0 then
-            report "top_2ms OK";
+            report "top_2ms_o OK";
             wait until falling_edge(observed_obs.pwm_o);
             skip_verif_pwm_s <= '0';
             wait until rising_edge(observed_obs.pwm_o);
             -- Lancement des testcases
-            testcase_upanddown(observed_obs.top_2ms, stimulus_sti, reference_ref);
+            testcase_upanddown(observed_obs.top_2ms_o, stimulus_sti, reference_ref);
             report "testcase_upanddown done";
-            testcase_tocenter(observed_obs.top_2ms, stimulus_sti, reference_ref, skip_verif_pwm_s);
+            testcase_tocenter(observed_obs.top_2ms_o, stimulus_sti, reference_ref, skip_verif_pwm_s);
             report "testcase_tocenter done";
-            testcase_automode(observed_obs.top_2ms, stimulus_sti, reference_ref);
+            testcase_automode(observed_obs.top_2ms_o, stimulus_sti, reference_ref);
             report "testcase_automode done";
-            testcase_errors(observed_obs.top_2ms, stimulus_sti, reference_ref, skip_verif_pwm_s);
+            testcase_errors(observed_obs.top_2ms_o, stimulus_sti, reference_ref, skip_verif_pwm_s);
             report "testcase_errors done";
         end if;
 

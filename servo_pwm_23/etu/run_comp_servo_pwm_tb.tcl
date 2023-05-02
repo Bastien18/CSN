@@ -28,7 +28,7 @@ vmap work work
 # file compilation
 vcom -reportprogress 300 -work work   ../src/ilog_pkg.vhd
 vcom -reportprogress 300 -work work   ../src/top_gen.vhd
-vcom -reportprogress 300 -work work   ../src/triangle_gen.vhd
+#vcom -reportprogress 300 -work work   ../src/triangle_gen.vhd
 vcom -reportprogress 300 -work work   ../src/gestion_position.vhd
 vcom -reportprogress 300 -work work   ../src/pwm.vhd
 vcom -reportprogress 300 -work work   ../src/servo_pwm_top.vhd
