@@ -338,67 +338,119 @@ L'intégration nous fourni l'analyse et le système complet comporte alors **140
 
 \center
 
-![analysis_full_sys](pics/Analysis_full.png){ width=60% }
+![analysis_full_sys](pics/Analysis_full.png){ width=55% }
 
 \raggedright
 
-## Prise de mesure
+\hfill\break
+
+## Schéma de mesure
 
 Les mesures ont étés prises en branchant une sonde d'oscilloscope sur la sortie du PWM, afin de mesurer le temps d'impulsion haute du signal.
 
-Soit la pseudo représentation de la Mezzanine et le branchement de l'oscilloscope:
+\hfill\break
 
+Soit la pseudo représentation de la Mezzanine, le branchement de mesure se présente comme suit:
 
+\center
+
+![measure_schem](pics/MezzanineServo.png){ width=55% }
+
+\raggedright
 
 \pagebreak
 
 ## Angle maximale
 
-\center
-
-![meas_t_up_2.0ms](pics/meas_Tup_2.0ms.jpg){ width=60% }
-
-\raggedright
+\hfill\break
 
 \center
 
-![meas_period_2.0ms](pics/meas_period_2.0ms.jpg){ width=60% }
+![meas_t_up_2.0ms](pics/meas_Tup_2.0ms.jpg){ width=80% }
 
 \raggedright
+
+\hfill\break
+
+\center
+
+![meas_period_2.0ms](pics/meas_period_2.0ms.jpg){ width=80% }
+
+\raggedright
+
+\pagebreak
 
 ## Angle milieu
 
+\hfill\break
+
 \center
 
-![meas_t_up_1.5ms](pics/meas_Tup_1.5ms.jpg){ width=60% }
+![meas_t_up_1.5ms](pics/meas_Tup_1.5ms.jpg){ width=80% }
 
 \raggedright
 
+\hfill\break
+
 \center
 
-![meas_period_1.5ms](pics/meas_period_1.5ms.jpg){ width=60% }
+![meas_period_1.5ms](pics/meas_period_1.5ms.jpg){ width=80% }
 
 \raggedright
 
 ## Angle minimale
 
-\center
-
-![meas_t_up_1.0ms](pics/meas_Tup_1.0ms.jpg){ width=60% }
-
-\raggedright
+\hfill\break
 
 \center
 
-![meas_period_1.0ms](pics/meas_period_1.0ms.jpg){ width=60% }
+![meas_t_up_1.0ms](pics/meas_Tup_1.0ms.jpg){ width=80% }
 
 \raggedright
+
+\hfill\break
+
+\center
+
+![meas_period_1.0ms](pics/meas_period_1.0ms.jpg){ width=80% }
+
+\raggedright
+
+\pagebreak
+
+## Constat et tests effectués après intégration
+
+Selon ce qui était demandé, le système respecte les contraintes du systèmes.
+
+Notes supplémentaires: En mode manuel, les butées sont maintenues lors de la pression continu des boutons "up_i" et "down_i".
+
+Le mouvement incrémentale est bien prioritaire sur le mouvement décrémentale.
+
+En pressant tous les boutons simultanément, c'est bien la position de centrage qui est prioritaire.
+
+La priorité de la position centrale est aussi respectée en mode automatique et reste fixé, tant que le bouton "center_i" n'est pas relâché.
+
+Le rebouclement du mode automatique s'effectue correctement.
+
+Et dernier test, le reset insère '0' dans le registre de position et le centrage est alors bien la première position, une fois le reset relâché.
 
 # Conclusion
 
+Pour conclure, nous avons pu vérifier que le laboratoire est fonctionnel, à l'aide du testbench et de l'intégration sur la carte MAXV. Les mesures à l'ocilloscope ont pu le démontrer.
+
+Nous disposons tout de même d'une version plus optimisée qui n'utilise qu'un seul additioneur qui gère:
+
+- et la décrémentation et l'incrémentation en mode automatique
+
+- ainsi que l'addition en mode automatique
+
+Mais par manque de temps pour déterminer identifier les 7 erreurs du testbench, cette option n'a pas été validée par l'assistant. Toutefois, elle est développée en annexe.
+
+Au total, le système comporte alors **140 logic éléments**, avec respectivement 33 éléments logiques pour la partie PWM et ... pour la gestion de position (les résultats d'analyse sont annexés à la fin du rapport).
+
 \raggedleft
 
-Date: Date de rendu
+Date: 3 Mai 2023
 
 - **PILLONEL Bastien**
 
@@ -661,11 +713,15 @@ end logic;
 
 Une seconde version, plus optimale, de la gestion de position a été réalisée.
 
-À l'intégration, cette solution est complètement fonctionnelle, les mesures sont identiques aux précédentes inclues dans le rapport et est constitué de **120 éléments logiques**, voici plus de détails:
+À l'intégration, cette solution est complètement fonctionnelle, les mesures sont identiques aux précédentes inclues dans le rapport et est constitué de **120 éléments logiques**, avec 33 et 36 éléments logiques, respectivement pour `pwm.vhd` et `gestion_position.vhd`.
+
+Au total, c'est 20 éléments de moins que la solutions développée plus haut.
+
+Voici plus de détails:
 
 \center
 
-![analysis](pics/optimized/analysis.png){ width=70% }
+![analysis](pics/optimized/analysis.png){ width=60% }
 
 \raggedright
 
