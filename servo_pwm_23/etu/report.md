@@ -27,8 +27,6 @@ Unité d'enseignement: **CSN**
 
 \hfill\break
 
-\hfill\break
-
 \raggedright
 
 Auteur(s):
@@ -55,6 +53,8 @@ Date:
 
 Le but de ce laboratoire est de réaliser un système qui pilote un servo-moteur (abrégé *servo* pour le reste du rapport), sur commande par PWM (Pulse Width Modulation).
 
+\hfill\break
+
 ## Objectif
 
 Les objectifs sont de concevoir, développer, simuler et tester un contrôleur de servo-moteur, sous la forme d’un système séquentiel simple.
@@ -63,15 +63,25 @@ Le système utilise le principe d’un PWM ("Pulse Width Modulation" ou "modulat
 
 Le laboratoire est décomposé en deux parties. Dans la première partie il s’agit de générer un signal PWM à l’aide d’un compteur en "dent de scie" et d’une comparaison (plus d’explications dans la section "Première partie: Création du PWM"). Dans la deuxième partie il s’agit de gérer la position courante du servo, selon le mode de fonctionnement et l’état des signaux de commande (voir la section "Deuxième partie: Gestion de la position").
 
+\pagebreak
+
 ## Spécification
 
 ### PWM: Pulse Width Modulation
 
 Un PWM est un signal carré de période fixe, à rapport cyclique changeant. Pour réaliser ce genre de signal, l'on se base sur un signal triangulaire (ou en dent de scie, dans le cas présent) et on le compare avec un signal de contrôle.
 
+\hfill\break
+
 Voici une démonstration:
 
-![pwm_behavior](pics/pwm_behavior.png)
+\center
+
+![pwm_behavior](pics/pwm_behavior.png){ width=60% }
+
+\raggedright
+
+\hfill\break
 
 ### Comportement du servo
 
@@ -93,9 +103,11 @@ Soit le bloc de cette partie représentée par:
 
 \center
 
-![schema_bloc_part_pwm](pics/pwm_schem_bloc.png){ width=70% }
+![schema_bloc_part_pwm](pics/pwm_schem_bloc.png){ width=40% }
 
 \raggedright
+
+\hfill\break
 
 Pour générer un PWM, voici les fonctions nécessaires:
 
@@ -109,7 +121,7 @@ Pour générer un PWM, voici les fonctions nécessaires:
 
 - synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie pwm_o, soit à '1', soit à '0'.
 
-<!--Contrairement à ce qu'il sera vu pour la gestion de position ... Je sais plus ce que je voulais dire iciiiiiii ...-->
+\hfill\break
 
 Selon cette liste, on voit que la table de fonctions synchrones ne peut faire intervenir que les éléments liés au comtpeur. Car l'entrée **seuil_i** et la sortie **pwm.o** sont régies par la règle:
 
@@ -119,13 +131,17 @@ pwm_o = '1' if cpt_period <= seul_i else '0'
 
 qui permet de générer le PWM.
 
+\hfill\break
+
 On obtient alors le décodeur d'états futurs du compteur:
 
 | top_1MHz_i | cpt_period | cpt_fut_period | Commentaires |
-| :--------: | ---------: | :------------- | :----------- |
-| 0 | - | =cpt_period | =Maintien des valeurs |
+| :--------: | :--------- | :------------- | :----------- |
+| 0 | - | =cpt_period | Maintien des valeurs |
 | 1 | =19999 | =0 | Rebouclement de la période |
 | 1 | / | =cpt_period+1 | Incrémentation du compteur |
+
+\pagebreak
 
 ## Deuxième partie: Gestion de la position
 
@@ -133,9 +149,11 @@ Voici tout d'abord la liste des entrées et sortie de notre bloc gestion de posi
 
 \center
 
-![schema_bloc_part_pwm](pics/pos_schem_bloc.png){ width=70% }
+![schema_bloc_part_pwm](pics/pos_schem_bloc.png){ width=40% }
 
 \raggedright
+
+\hfill\break
 
 Les fonctions nécessaires sont :
 
@@ -149,7 +167,9 @@ Les fonctions nécessaires sont :
 
 - synchrone&nbsp;: un détecteur des valeurs min et max de $T_{on}$ avec maintien de la valeur une fois arrivé (pour le mode manuel) ou chargement d'un $T_{on}$ correspondant à la position centrale si $T_{on}$ est hors min ou max
 
-_*Note:_ $T_{on}$ _correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
+_Note:_ $T_{on}$ _correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
+
+\hfill\break
 
 Si l'on reprend la donnée du labo, on remarque qu'il est important de donner des priorités pour chaque fonction:
 
@@ -159,43 +179,51 @@ Si l'on reprend la donnée du labo, on remarque qu'il est important de donner de
 4) Incrément jusqu'à $T_{on}$ max puis maintien si up_i actif
 5) Décrément jusqu'à $T_{on}$ min puis maintien si down_i
 
+\pagebreak
+
 Voici la table de fonctions synchrones:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
-| :----: | :----: | :--: | :------: | :------: | :------ | :----------- |
+| :---: | :---: | :-: | :---: | :------ | :--------- | :----------- |
 | / | / | / | / | <999 ou >1999 | =1499 | Chargement pos. centrale si hors limite |
 | 1 | / | / | / | / | =1499 | Chargement pos. centrale |
 | / | 1 | / | / | =1999 | =999 | Rebouclement |
-| / | 1 | / | / | autres | =reg_pres + 1 | Incrément (mode auto.) |
+| / | 1 | / | / | autres | =reg_pres+1 | Incrément (mode auto.) |
 | / | / | 1 | / | =1999 | =reg_pres | Maintien |
-| / | / | 1 | / | autres | =reg_pres + 1 | Incrément (mode man.) |
+| / | / | 1 | / | autres | =reg_pres+1 | Incrément (mode man.) |
 | / | / | / | 1 | =999 | =reg_pres | Maintien |
-| / | / | / | 1 | autres | =reg_pres - 1 | Soustraction |
+| / | / | / | 1 | autres | =reg_pres-1 | Soustraction |
+
+\hfill\break
 
 Un premier regroupement peut être effectuer, on obtient alors la table suivante:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
-| :----: | :----: | :--: | :------: | :------: | :------ | :----------- |
+| :---: | :---: | :-: | :---: | :------ | :--------- | :----------- |
 | / | / | / | / | <999 ou >1999 | =1499 | Chargement pos. centrale si hors limite |
 | 1 | / | / | / | / | =1499 | Chargement pos. centrale |
 | / | 1 | / | / | =1999 | =999 | Rebouclement |
 | / | / | 1 | / | =1999 | =reg_pres | Maintien |
 | / | / | / | 1 | =999 | =reg_pres | Maintien |
-| / | / | / | 1 | autres | =reg_pres - 1 | Soustraction |
-| / | / | / | / | autres schema_bloc_part_pwm| =reg_pres + 1 | Incrément |
+| / | / | / | 1 | autres | =reg_pres-1 | Soustraction |
+| / | / | / | / | autres | =reg_pres+1 | Incrément |
 
 L'addition et la soustraction peuvent être effectuer par le même bloc additionneur (pour une soustraction, on met le report d'entrée à '1' et on inverse le second nombre d'entrée).
+
+\pagebreak
 
 On peut donc coupler ces états et terminer avec la table suivante:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
-| :----: | :----: | :--: | :------: | :------: | :------ | :----------- |
+| :---: | :---: | :-: | :---: | :------ | :------------- | :----------- |
 | / | / | / | / | <999 ou >1999 | =1499 | Chargement pos. centrale si hors limite |
 | 1 | / | / | / | / | =1499 | Chargement pos. centrale |
 | / | 1 | / | / | =1999 | =999 | Rebouclement |
 | / | / | 1 | / | =1999 | =reg_pres | Maintien |
 | / | / | / | 1 | =999 | =reg_pres | Maintien |
-| / | / | / | / | autres | =reg_pres "opération" 1 | Incrément/Soustraction |
+| / | / | / | / | autres | =reg_pres "op." 1 | Incrément/Soustraction |
+
+\hfill\break
 
 Schéma bloc de la gestion de position:
 
@@ -261,6 +289,11 @@ Date: Date de rendu
 
 ## pwm.vhd
 
+\hfill\break
+
+\scriptsize
+<!--\footnotesize-->
+
 ```vhdl
 library ieee;
 use ieee.std_logic_1164.all;
@@ -286,7 +319,7 @@ architecture comp of pwm is
     signal cpt_period_reg_fut_s  : unsigned(seuil_i'range);
     signal pwm_s                 : std_logic;
 
-begin
+    begin
     -- TO COMPLETE: Sawtooth counter generation
     -- Hold current value when top 1MHz ("enable" like) is down
     -- Add1 or Loop period's counter otherwise
@@ -321,7 +354,15 @@ begin
 end architecture;
 ```
 
+\normalsize
+
+\pagebreak
+
 ## gestion_position.vhd
+
+\hfill\break
+
+\scriptsize
 
 ```vhdl
 library ieee;
@@ -356,8 +397,7 @@ architecture logic of gestion_position is
     constant COUNT_MIN : unsigned(10 downto 0) := "01111100111"; -- unsigned 999
     constant COUNT_MID : unsigned(10 downto 0) := "10111011011"; -- unsigned 1499
 
-begin
-
+    begin
     -- TO COMPLETE: Calculate position
     -- Intern signal to enable the flipflop during max Ton of the pwm
     enable_count_s  <=  top_2ms_i;
@@ -375,7 +415,11 @@ begin
 
     center_s        <= det_out_range_s or center_i;
     hold_value_s    <= (up_i and det_max_s) or (down_i and det_min_s);
-    
+```
+
+\pagebreak
+
+```vhdl
     -- Decoder of futur state
     going_up_s      <=  std_logic_vector(COUNT_MIN) when det_max_s = '1' else
                         add_1_s;
@@ -411,13 +455,23 @@ begin
 end logic;
 ```
 
+\normalsize
+
+\pagebreak
+
 ## Gestion position optimisée
 
 ### Schéma attendu
 
 ### Vue RTL
 
+\pagebreak
+
 ### gestion_position.vhd (optimisé)
+
+\hfill\break
+
+\scriptsize
 
 ```vhdl
 library ieee;
@@ -460,8 +514,12 @@ architecture logic of gestion_position is
 	                                         to_unsigned(1499, position'length);
     constant LIMIT_LOWER_BOUND : unsigned(position'range) :=
 	                                         to_unsigned( 999, position'length);
+```
 
-begin
+\pagebreak
+
+```vhdl
+    begin
     -- TO COMPLETE: Calculate position
     -- Add 1 / Sub 1 part
     sub_carry_s <= down_i and (not up_i) and (not mode_i);
@@ -516,4 +574,6 @@ begin
 
 end logic;
 ```
+
+\normalsize
 
