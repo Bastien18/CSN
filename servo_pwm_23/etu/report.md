@@ -97,7 +97,7 @@ Dans le cadre de ce laboratoire, le PWM du servo fonctionne selon ces informatio
 
 # Analyse
 
-## Première partie: Gestion de la création du PWM
+## Première partie: Génération du PWM
 
 Soit le bloc de cette partie représentée par:
 
@@ -109,7 +109,17 @@ Soit le bloc de cette partie représentée par:
 
 \hfill\break
 
-Pour générer un PWM, voici les fonctions nécessaires:
+Il est souhaité de générer un PWM selon les caractérstiques suivantes:
+
+\center
+
+![pwm_to_generate](pics/pwm_to_generate.png){ width=90% }
+
+\raggedright
+
+\hfill\break
+
+Pour générer ce PWM, voici les fonctions nécessaires:
 
 - asynchrone: Reset
 
@@ -121,9 +131,9 @@ Pour générer un PWM, voici les fonctions nécessaires:
 
 - synchrone&nbsp;: Un comparateur entre le compteur de la période du PWM et le seuil d'entrée, pour fixer la sortie pwm_o, soit à '1', soit à '0'.
 
-\hfill\break
+\pagebreak
 
-Selon cette liste, on voit que la table de fonctions synchrones ne peut faire intervenir que les éléments liés au comtpeur. Car l'entrée **seuil_i** et la sortie **pwm.o** sont régies par la règle:
+Selon la liste précédente, on voit que la table de fonctions synchrones ne peut faire intervenir que les éléments liés au compteur. Car l'entrée **seuil_i** et la sortie **pwm.o** sont régies par la règle:
 
 ```python
 pwm_o = '1' if cpt_period <= seul_i else '0'
@@ -141,47 +151,57 @@ On obtient alors le décodeur d'états futurs du compteur:
 | 1 | =19999 | =0 | Rebouclement de la période |
 | 1 | / | =cpt_period+1 | Incrémentation du compteur |
 
+\hfill\break
+
+Le schéma attendu sera montré en chapitre "Réalisation et Implémentation", afin de le comparer avec la vue RTL du bloque.
+
 \pagebreak
 
 ## Deuxième partie: Gestion de la position
 
-Voici tout d'abord la liste des entrées et sortie de notre bloc gestion de position:
+Voici tout d'abord la liste des entrées et sortie de notre bloc "gestion de position":
 
 \center
 
-![schema_bloc_part_pwm](pics/pos_schem_bloc.png){ width=40% }
+![schema_bloc_part_pwm](pics/pos_schem_bloc.png){ width=30% }
 
 \raggedright
 
 \hfill\break
 
-Les fonctions nécessaires sont :
+Les fonctions nécessaires sont:
 
 - asynchrone: reset
 
-- synchrone&nbsp;: un element mémoire pour le compteur précédent
+- synchrone&nbsp;:  un compteur/décompteur pour le temps de l'impulsion haute ($T_{on}$)
 
-- synchrone&nbsp;:  un compteur/décompteur pour le temps de l'impulsion haute ($T_{on}$)*
+- synchrone&nbsp;: un élément mémoire pour le compteur précédent
 
-- synchrone&nbsp;: un rebouclement du compteur une fois arrivé au maximum de $T_{on}$ (pour le mode automatique)
+- synchrone&nbsp;: un rebouclement du compteur, lorsqu'il au maximum de $T_{on}$ (pour le mode automatique)
 
-- synchrone&nbsp;: un détecteur des valeurs min et max de $T_{on}$ avec maintien de la valeur une fois arrivé (pour le mode manuel) ou chargement d'un $T_{on}$ correspondant à la position centrale si $T_{on}$ est hors min ou max
+- synchrone&nbsp;: un détecteur des limites "min" et "max" de $T_{on}$, avec maintien de la valeur une fois arrivé en buté (pour le mode manuel)
 
-_Note:_ $T_{on}$ _correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
+    - De plus, il faut charger une valeur de $T_{on}$ correspondant à la position centrale, si $T_{on}$ est hors limites
+
+_Note: Le compteur définit le temps haut_ $T_{on}$. _Le compteur peut alors prendre comme valeur minimale 999, correspondant à un_ $T_{on}$ _de 1\[ms\] et une valeur maximale de 1999, correspondant à un_ $T_{on}$ _de 2\[ms\]._
 
 \hfill\break
 
 Si l'on reprend la donnée du labo, on remarque qu'il est important de donner des priorités pour chaque fonction:
 
-1) Chargement pos. centrale si hors limite
-2) Chargement pos. centrale si center_i actif
-3) Boucle d'incrémentation si mode_i est actif (mode auto)
-4) Incrément jusqu'à $T_{on}$ max puis maintien si up_i actif
-5) Décrément jusqu'à $T_{on}$ min puis maintien si down_i
+1. Chargement pos. centrale si hors limite
+
+2. Chargement pos. centrale si center_i actif
+
+3. Boucle d'incrémentation si mode_i est actif (mode auto)
+
+4. Incrément jusqu'à $T_{on}$ max puis maintien si up_i actif
+
+5. Décrément jusqu'à $T_{on}$ min puis maintien si down_i
 
 \pagebreak
 
-Voici la table de fonctions synchrones:
+Voici alors la table de fonctions synchrones:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
 | :---: | :---: | :-: | :---: | :------ | :--------- | :----------- |
@@ -196,7 +216,7 @@ Voici la table de fonctions synchrones:
 
 \hfill\break
 
-Un premier regroupement peut être effectuer, on obtient alors la table suivante:
+Un premier regroupement des valeurs de *reg_pres*, égalent à "autres", peut être effectuer, on obtient donc la table suivante:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
 | :---: | :---: | :-: | :---: | :------ | :--------- | :----------- |
@@ -233,9 +253,89 @@ Schéma bloc de la gestion de position:
 
 \raggedright
 
+\pagebreak
+
 # Réalisation et implantation
 
+\hfill\break
+
+## Première partie: Génération du PWM
+
+\hfill\break
+
+### Comparaison des schémas: Esquisse papier VS vue RTL
+
+\center
+
+![pwm_drawing](pics/Schema_bloc_pwm_KBP.jpg){ width=70% }
+
+\raggedright
+
+\hfill\break
+
+![pwm_rtl](pics/RTL_pwm_KBP.png)
+
+\hfill\break
+
+On voit que la vue RTL correspond bien au schéma attendu.
+
+\hfill\break
+
+*Remarque: La valeur héxadécimal 0x4E20 correspond à 20'000 et la condition est strictement plus petite, soit bien 19'999 comme énoncé avec la table de fonctions synchrones*
+
+\pagebreak
+
+## Deuxième partie: Gestion de la position
+
+\hfill\break
+
+### Comparaison des schémas: Esquisse papier VS vue RTL
+
+\center
+
+![pwm_drawing](pics/Schema_bloc_gest_pos_BP.jpg){ width=70% }
+
+\raggedright
+
+\hfill\break
+
+![pwm_rtl](pics/RTL_gestpos_BP.png)
+
+\hfill\break
+
+On voit que la vue RTL correspond bien au schéma attendu.
+
+\hfill\break
+
+*Remarque: La valeur héxadécimal 0x4E20 correspond à 20'000 et la condition est strictement plus petite, soit bien 19'999 comme énoncé avec la table de fonctions synchrones*
+
 # Simulation
+
+## Log de simulation
+
+```shell
+# vsim work.servo_pwm_tb
+# Start time: 22:25:21 on May 02,2023
+# ** Note: (vsim-8009) Loading existing optimized design _opt2
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.fixed_float_types
+# Loading ieee.math_real(body)
+# Loading ieee.fixed_generic_pkg(body)
+# Loading ieee.float_generic_pkg(body)
+# Loading ieee.fixed_pkg
+# Loading ieee.float_pkg
+# Loading work.servo_pwm_tb(test_bench)#1
+# Loading work.ilog_pkg(body)
+# Loading work.servo_pwm_top(struct)#1
+# Loading work.top_gen(calc)#1
+# Loading work.top_gen(calc)#2
+# Loading work.gestion_position(logic)#1
+# Loading work.pwm(comp)#1
+```
+
 
 # Intégration/Mesure
 
@@ -273,6 +373,8 @@ Date: Date de rendu
 
 # Annexe(s)
 
+- Résultat de simulation
+
 - pwm.vhd
 
 - gestion_position.vhd
@@ -284,6 +386,63 @@ Date: Date de rendu
     - Vue RTL
 
     - gestion_position.vhd (optimisé)
+
+\hfill\break
+
+## Résultat de la simulation
+
+\scriptsize
+
+```shell
+# ** Note: Debut de la simulation
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Error: (vsim-86) Argument value -2147483647 is not in bounds of subtype NATURAL.
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD.TO_UNSIGNED: vector truncated
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD."<": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD.">": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Warning: NUMERIC_STD."/=": metavalue detected, returning TRUE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_1MHz
+# ** Warning: NUMERIC_STD."/=": metavalue detected, returning TRUE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_1MHz
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 1  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 1  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Note: top_2ms OK
+#    Time: 666734 ns  Iteration: 0  Instance: /servo_pwm_tb
+# ** Note: testcase_upanddown done
+#    Time: 1321914082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_tocenter done
+#    Time: 3136914082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_automode done
+#    Time: 3237894082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_errors done
+#    Time: 3340194082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: Fin de la simulation
+#    Time: 3340194082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: NOMBRE D'ERREURS : 0
+#    Time: 3340194082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: VOUS ETES LES MEILLEURS!!!
+#    Time: 3340194082 ns  Iteration: 3  Instance: /servo_pwm_tb
+```
+
+\normalsize
 
 \pagebreak
 
@@ -461,7 +620,116 @@ end logic;
 
 ## Gestion position optimisée
 
+Une seconde version, plus optimale, de la gestion de position a été réalisée.
+
+Cette dernière n'a pas été vérifiée par l'assistant, car il restait 7 erreurs à la simulation et le temps manquait pour vérifier l'origine de chacune d'entre-elles.
+
+\hfill\break
+
+Voici les logs de simulation:
+
+\scriptsize
+
+```shell
+# vsim -voptargs=""+acc"" work.servo_pwm_tb
+# Start time: 11:44:16 on May 03,2023
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.fixed_float_types
+# Loading ieee.math_real(body)
+# Loading ieee.fixed_generic_pkg(body)
+# Loading ieee.float_generic_pkg(body)
+# Loading ieee.fixed_pkg
+# Loading ieee.float_pkg
+# Loading work.servo_pwm_tb(test_bench)#1
+# Loading work.ilog_pkg(body)
+# Loading work.servo_pwm_top(struct)#1
+# Loading work.top_gen(calc)#1
+# Loading work.top_gen(calc)#2
+# Loading work.gestion_position(logic)#1
+# Loading work.pwm(comp)#1
+```
+
+\normalsize
+
+\pagebreak
+
+Erreurs obtenues:
+
+\scriptsize
+
+```shell
+# ** Note: Debut de la simulation
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb
+# ** Warning: NUMERIC_STD."<=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD."<": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD.">": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."<": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gest_pos
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Warning: NUMERIC_STD."/=": metavalue detected, returning TRUE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_1MHz
+# ** Warning: NUMERIC_STD."/=": metavalue detected, returning TRUE
+#    Time: 0 ns  Iteration: 0  Instance: /servo_pwm_tb/dut/gen_top_1MHz
+# ** Warning: NUMERIC_STD."<=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 1  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Warning: NUMERIC_STD."=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 1  Instance: /servo_pwm_tb/dut/gen_top_2ms
+# ** Warning: NUMERIC_STD."<=": metavalue detected, returning FALSE
+#    Time: 0 ns  Iteration: 4  Instance: /servo_pwm_tb/dut/pwm_inst
+# ** Note: top_2ms_o OK
+#    Time: 666734 ns  Iteration: 0  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR in pwm_o PWM duty cycle: expected between 49450 ns and 49483 ns but got 49500 ns
+#    Time: 1369615 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR incorrect freq on pwm_o: expected between 600000 ns and 733333 ns but got 57717 ns
+#    Time: 166386082 ns  Iteration: 5  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR in pwm_o PWM duty cycle: expected between 57733 ns and 57766 ns but got 33 ns
+#    Time: 166386115 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_upanddown done
+#    Time: 1321980082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR incorrect freq on pwm_o: expected between 600000 ns and 733333 ns but got 48543 ns
+#    Time: 1669932082 ns  Iteration: 5  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR in pwm_o PWM duty cycle: expected between 49483 ns and 49516 ns but got 957 ns
+#    Time: 1669933039 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR incorrect freq on pwm_o: expected between 600000 ns and 733333 ns but got 596442 ns
+#    Time: 2689634524 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Error: >>>ERROR in pwm_o PWM duty cycle: expected between 49483 ns and 49516 ns but got 54219 ns
+#    Time: 2876478082 ns  Iteration: 5  Instance: /servo_pwm_tb
+# ** Note: testcase_tocenter done
+#    Time: 3143580082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_automode done
+#    Time: 3244626082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: testcase_errors done
+#    Time: 3346926082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: Fin de la simulation
+#    Time: 3346926082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: NOMBRE D'ERREURS : 7
+#    Time: 3346926082 ns  Iteration: 3  Instance: /servo_pwm_tb
+# ** Note: IL FAUT CONTINUER...
+#    Time: 3346926082 ns  Iteration: 3  Instance: /servo_pwm_tb
+```
+
+\normalsize
+
+\hfill\break
+
+Toutefois, certaines erreurs ont été analysées et se trouvent être, comme le cas où on a une erreur de rapport cyclique à 33\[ns\], dû à des glitchs de simulations.
+
 ### Schéma attendu
+
 
 ### Vue RTL
 
