@@ -63,6 +63,26 @@ Le système utilise le principe d’un PWM ("Pulse Width Modulation" ou "modulat
 
 Le laboratoire est décomposé en deux parties. Dans la première partie il s’agit de générer un signal PWM à l’aide d’un compteur en "dent de scie" et d’une comparaison (plus d’explications dans la section "Première partie: Création du PWM"). Dans la deuxième partie il s’agit de gérer la position courante du servo, selon le mode de fonctionnement et l’état des signaux de commande (voir la section "Deuxième partie: Gestion de la position").
 
+\hfill\break
+
+## Remarque sur les vues technologic
+
+Les vues technologic ont été exportées en PDF et fusionner avec l'outil en ligne [ILovePdf](https://www.ilovepdf.com/merge_pdf), en utilisant l'utilitaire fournit par Quartus.
+
+De part leur taille, ils seront alors annexés à la fin du rapport, pour ne pas surcharger le contenu du rapport lui-même. Ainsi qu'introduit dans l'archive de rendu.
+
+\hfill\break
+
+## Matériel utilisé
+
+- Carte de développement: MAX_V_80P_25P, avec carte Mezzanine pour servo-moteur, avec un exemplaire du dit servo.
+
+- Oscilloscope de la marque Tektronix
+
+- Alimentation de laboratoire, 2 sorties: 1) 5V/???A 2) 12V/???A
+
+- Logiciels: Quartus et Questasim
+
 \pagebreak
 
 ## Spécification
@@ -354,7 +374,7 @@ Soit la pseudo représentation de la Mezzanine, le branchement de mesure se pré
 
 \center
 
-![measure_schem](pics/MezzanineServo.png){ width=55% }
+![measure_schem](pics/MezzanineServo_text.png){ width=55% }
 
 \raggedright
 
@@ -434,6 +454,8 @@ Le rebouclement du mode automatique s'effectue correctement.
 
 Et dernier test, le reset insère '0' dans le registre de position et le centrage est alors bien la première position, une fois le reset relâché.
 
+\hfill\break
+
 # Conclusion
 
 Pour conclure, nous avons pu vérifier que le laboratoire est fonctionnel, à l'aide du testbench et de l'intégration sur la carte MAXV. Les mesures à l'ocilloscope ont pu le démontrer.
@@ -444,17 +466,19 @@ Nous disposons tout de même d'une version plus optimisée qui n'utilise qu'un s
 
 - ainsi que l'addition en mode automatique
 
-Mais par manque de temps pour déterminer identifier les 7 erreurs du testbench, cette option n'a pas été validée par l'assistant. Toutefois, elle est développée en annexe.
+Mais par manque de temps pour identifier les 7 erreurs du testbench, cette option n'a pas été validée par l'assistant. Toutefois, elle est développée en annexe.
 
-Au total, le système comporte alors **140 logic éléments**, avec respectivement 33 éléments logiques pour la partie PWM et ... pour la gestion de position (les résultats d'analyse sont annexés à la fin du rapport).
+Au total, le système comporte alors **140 logic éléments**, avec respectivement 33 éléments logiques pour la partie PWM et 56 pour la gestion de position (les résultats d'analyse sont annexés à la fin du rapport).
 
 \raggedleft
 
+\hfill\break
+
 Date: 3 Mai 2023
 
-- **PILLONEL Bastien**
+**PILLONEL Bastien**
 
-- **BOUGNON-PEIGNE Kévin**
+**BOUGNON-PEIGNE Kévin**
 
 \raggedright
 
@@ -462,7 +486,11 @@ Date: 3 Mai 2023
 
 # Annexe(s)
 
+- Résultat d'analyse des parties
+
 - Résultat de simulation
+
+- Vues Technologic de PWM et Gestion de la position
 
 - pwm.vhd
 
@@ -478,11 +506,33 @@ Date: 3 Mai 2023
 
 \hfill\break
 
+## Résultat d'analyse des parties
+
+### Analyse PWM
+
+\center
+
+![analysis_pwm](pics/Nbr_logical_PWM.png){ width=70% }
+
+\raggedright
+
+\hfill\break
+
+### Analyse Gestion de la position
+
+\center
+
+![analysis_pwm](pics/Nbr_logical_gestpos.png){ width=70% }
+
+\raggedright
+
+\pagebreak
+
 ## Résultat de la simulation
 
 \hfill\break
 
-\tiny
+\scriptsize
 
 ```shell
 # ** Note: Debut de la simulation
@@ -534,6 +584,10 @@ Date: 3 Mai 2023
 ```
 
 \normalsize
+
+\pagebreak
+
+## Vues Technologic de PWM et Gestion de la position
 
 \pagebreak
 
