@@ -245,13 +245,7 @@ On peut donc coupler ces états et terminer avec la table suivante:
 
 \hfill\break
 
-Schéma bloc de la gestion de position:
-
-\center
-
-![schema_bloc_gest_pos](./pics/Schema_bloc_gest_pos_BP.jpg){ width=70% }
-
-\raggedright
+Comme pour la partie de génération PWM, le schéma estimé sera présenté en titre "Réalisation et Implémentation" pour être comparé avec la vue RTL.
 
 \pagebreak
 
@@ -303,13 +297,13 @@ On voit que la vue RTL correspond bien au schéma attendu.
 
 \hfill\break
 
-On voit que la vue RTL correspond bien au schéma attendu.
+Ici encore, la vue RTL correspond bien à l'esquisse effectuée.
 
-\hfill\break
-
-*Remarque: La valeur héxadécimal 0x4E20 correspond à 20'000 et la condition est strictement plus petite, soit bien 19'999 comme énoncé avec la table de fonctions synchrones*
+\pagebreak
 
 # Simulation
+
+\hfill\break
 
 ## Log de simulation
 
@@ -336,26 +330,69 @@ On voit que la vue RTL correspond bien au schéma attendu.
 # Loading work.pwm(comp)#1
 ```
 
+\pagebreak
 
 # Intégration/Mesure
 
+L'intégration nous fourni l'analyse et le système complet comporte alors **140 éléments logiques**:
+
+\center
+
+![analysis_full_sys](pics/Analysis_full.png){ width=60% }
+
+\raggedright
+
+## Prise de mesure
+
+Les mesures ont étés prises en branchant une sonde d'oscilloscope sur la sortie du PWM, afin de mesurer le temps d'impulsion haute du signal.
+
+Soit la pseudo représentation de la Mezzanine et le branchement de l'oscilloscope:
+
+
+
+\pagebreak
+
 ## Angle maximale
 
-![meas_t_up_2.0ms](pics/meas_Tup_2.0ms.jpg)
+\center
 
-![meas_period_2.0ms](pics/meas_period_2.0ms.jpg)
+![meas_t_up_2.0ms](pics/meas_Tup_2.0ms.jpg){ width=60% }
+
+\raggedright
+
+\center
+
+![meas_period_2.0ms](pics/meas_period_2.0ms.jpg){ width=60% }
+
+\raggedright
 
 ## Angle milieu
 
-![meas_t_up_1.5ms](pics/meas_Tup_1.5ms.jpg)
+\center
 
-![meas_period_1.5ms](pics/meas_period_1.5ms.jpg)
+![meas_t_up_1.5ms](pics/meas_Tup_1.5ms.jpg){ width=60% }
+
+\raggedright
+
+\center
+
+![meas_period_1.5ms](pics/meas_period_1.5ms.jpg){ width=60% }
+
+\raggedright
 
 ## Angle minimale
 
-![meas_t_up_1.0ms](pics/meas_Tup_1.0ms.jpg)
+\center
 
-![meas_period_1.0ms](pics/meas_period_1.0ms.jpg)
+![meas_t_up_1.0ms](pics/meas_Tup_1.0ms.jpg){ width=60% }
+
+\raggedright
+
+\center
+
+![meas_period_1.0ms](pics/meas_period_1.0ms.jpg){ width=60% }
+
+\raggedright
 
 # Conclusion
 
@@ -391,7 +428,9 @@ Date: Date de rendu
 
 ## Résultat de la simulation
 
-\scriptsize
+\hfill\break
+
+\tiny
 
 ```shell
 # ** Note: Debut de la simulation
@@ -622,6 +661,16 @@ end logic;
 
 Une seconde version, plus optimale, de la gestion de position a été réalisée.
 
+À l'intégration, cette solution est complètement fonctionnelle, les mesures sont identiques aux précédentes inclues dans le rapport et est constitué de **120 éléments logiques**, voici plus de détails:
+
+\center
+
+![analysis](pics/optimized/analysis.png){ width=70% }
+
+\raggedright
+
+\hfill\break
+
 Cette dernière n'a pas été vérifiée par l'assistant, car il restait 7 erreurs à la simulation et le temps manquait pour vérifier l'origine de chacune d'entre-elles.
 
 \hfill\break
@@ -728,10 +777,23 @@ Erreurs obtenues:
 
 Toutefois, certaines erreurs ont été analysées et se trouvent être, comme le cas où on a une erreur de rapport cyclique à 33\[ns\], dû à des glitchs de simulations.
 
-### Schéma attendu
+### Schéma attendu VS vue RTL
 
+\hfill\break
 
-### Vue RTL
+\center
+
+![expected](pics/optimized/ebauche_papiert.jpg){ width=80% }
+
+\hfill\break
+
+![rtl_view](pics/optimized/optimized_with_7_simu_errors.png)
+
+\raggedright
+
+\hfill\break
+
+Les deux vues sont identiques, si ce n'est la gestion du carry. Cette partie étant gérée avec des `unsigned`, en utilisant le `addn` d'un laboratoire précédent, il serait possible de mieux se rapprocher de l'ébauche papier.
 
 \pagebreak
 
