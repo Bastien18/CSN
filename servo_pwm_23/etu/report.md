@@ -129,7 +129,7 @@ On obtient alors le décodeur d'états futurs du compteur:
 
 ## Deuxième partie: Gestion de la position
 
-Blablabla...
+Voici tout d'abord la liste des entrées et sortie de notre bloc gestion de position:
 
 \center
 
