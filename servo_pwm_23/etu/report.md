@@ -149,7 +149,7 @@ Les fonctions nécessaires sont :
 
 - synchrone&nbsp;: un détecteur des valeurs min et max de $T_{on}$ avec maintien de la valeur une fois arrivé (pour le mode manuel) ou chargement d'un $T_{on}$ correspondant à la position centrale si $T_{on}$ est hors min ou max
 
-_*Note: $T_{on}$ correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
+_*Note:_ $T_{on}$ _correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
 
 Si l'on reprend la donnée du labo, on remarque qu'il est important de donner des priorités pour chaque fonction:
 
