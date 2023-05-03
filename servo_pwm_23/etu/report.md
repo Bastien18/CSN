@@ -259,15 +259,14 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity pwm is
-    port (
-        -- Sync
-        clock_i     : in std_logic;
-        reset_i     : in std_logic;
-        -- Inputs
-        top_1MHz_i  : in std_logic;
-        seuil_i     : in std_logic_vector(14 downto 0); -- range: [0, 2000]
-        -- Outputs
-        pwm_o       : out std_logic
+    port (-- Sync
+          clock_i     : in std_logic;
+          reset_i     : in std_logic;
+          -- Inputs
+          top_1MHz_i  : in std_logic;
+          seuil_i     : in std_logic_vector(14 downto 0); -- range: [0, 2000]
+          -- Outputs
+          pwm_o       : out std_logic
     );
 end entity pwm;
 
@@ -281,12 +280,9 @@ architecture comp of pwm is
 
 begin
     -- TO COMPLETE: Sawtooth counter generation
-    --| Components instanciation |----------------------------------------------
-    -- Adder that manage the PWM period: [0 and 20000]
-
-     -- Hold current value when top 1MHz ("enable" like) is down
-     -- Add1 or Loop period's counter otherwise
-    cpt_period_reg_fut_s <= cpt_period_reg_pres_s     when top_1MHz_i = '0' else
+    -- Hold current value when top 1MHz ("enable" like) is down
+    -- Add1 or Loop period's counter otherwise
+    cpt_period_reg_fut_s <= cpt_period_reg_pres_s     when top_1MHz_i = '0'              else
                             cpt_period_reg_pres_s + 1 when cpt_period_reg_pres_s < 20000 else
                             to_unsigned(0, cpt_period_reg_fut_s'length);
 
@@ -325,31 +321,29 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity gestion_position is
-    port (
-        -- Sync
-        clock_i     : in std_logic;
-        reset_i     : in std_logic;
-        -- Inputs
-        down_i      : in std_logic;
-        up_i        : in std_logic;
-        mode_i      : in std_logic;
-        top_2ms_i   : in std_logic;
-        center_i    : in std_logic;
-        -- Outputs
-        position    : out std_logic_vector(10 downto 0)
+    port (-- Sync
+          clock_i     : in std_logic;
+          reset_i     : in std_logic;
+          -- Inputs
+          down_i      : in std_logic;
+          up_i        : in std_logic;
+          mode_i      : in std_logic;
+          top_2ms_i   : in std_logic;
+          center_i    : in std_logic;
+          -- Outputs
+          position    : out std_logic_vector(10 downto 0)
     );
 end entity gestion_position;
 
 architecture logic of gestion_position is
-
-    -- TO COMPLETE: Signals declaration
+    --| Signals |---------------------------------------------------------------
     signal Q_pres_s, Q_fut_s, add_1_s, sub_1_s, mode_select_s, going_up_s, manual_mode_s : std_logic_vector(10 downto 0);
     
     signal det_min_s, det_max_s, det_out_range_s, center_s, enable_count_s, hold_value_s : std_logic;
 
     signal count_value_s    : unsigned(10 downto 0);
 
-    -- Constant
+    --| Constants |-------------------------------------------------------------
     constant COUNT_MAX : unsigned(10 downto 0) := "11111001111"; -- unsigned 1999
     constant COUNT_MIN : unsigned(10 downto 0) := "01111100111"; -- unsigned 999
     constant COUNT_MID : unsigned(10 downto 0) := "10111011011"; -- unsigned 1499
@@ -360,24 +354,27 @@ begin
     -- Intern signal to enable the flipflop during max Ton of the pwm
     enable_count_s  <=  top_2ms_i;
 
-    det_max_s       <=  '1' when count_value_s = COUNT_MAX else '0';
-    det_min_s       <=  '1' when count_value_s = COUNT_MIN else '0';
-    det_out_range_s <=  '1' when (count_value_s < COUNT_MIN OR count_value_s > COUNT_MAX) else '0';
+    det_max_s       <= '1' when count_value_s = COUNT_MAX else
+                       '0';
+    det_min_s       <= '1' when count_value_s = COUNT_MIN else 
+                       '0';
+    det_out_range_s <= '1' when (count_value_s < COUNT_MIN OR count_value_s > COUNT_MAX) else 
+                       '0';
 
-    count_value_s   <=  unsigned(Q_pres_s);
-    add_1_s         <=  std_logic_vector(count_value_s + 1);
-    sub_1_s         <=  std_logic_vector(count_value_s - 1);
+    count_value_s   <= unsigned(Q_pres_s);
+    add_1_s         <= std_logic_vector(count_value_s + 1);
+    sub_1_s         <= std_logic_vector(count_value_s - 1);
 
-    center_s        <=  det_out_range_s or center_i;
-    hold_value_s    <=  (up_i and det_max_s) or (down_i and det_min_s);
+    center_s        <= det_out_range_s or center_i;
+    hold_value_s    <= (up_i and det_max_s) or (down_i and det_min_s);
     
     -- Decoder of futur state
     going_up_s      <=  std_logic_vector(COUNT_MIN) when det_max_s = '1' else
                         add_1_s;
 
     manual_mode_s   <=  Q_pres_s when hold_value_s = '1' else
-                        add_1_s when up_i = '1' else 
-                        sub_1_s when down_i = '1' else
+                        add_1_s  when up_i = '1'         else 
+                        sub_1_s  when down_i = '1'       else
                         Q_pres_s;
 
     mode_select_s   <=  going_up_s when mode_i = '1' else 
@@ -420,36 +417,35 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity gestion_position is
-    port (
-        -- Sync
-        clock_i     : in std_logic;
-        reset_i     : in std_logic;
-        -- Inputs
-        down_i      : in std_logic;
-        up_i        : in std_logic;
-        mode_i      : in std_logic;
-        top_2ms_i   : in std_logic;
-        center_i    : in std_logic;
-        -- Outputs
-        position    : out std_logic_vector(10 downto 0)
+    port (-- Sync
+          clock_i     : in std_logic;
+          reset_i     : in std_logic;
+          -- Inputs
+          down_i      : in std_logic;
+          up_i        : in std_logic;
+          mode_i      : in std_logic;
+          top_2ms_i   : in std_logic;
+          center_i    : in std_logic;
+          -- Outputs
+          position    : out std_logic_vector(10 downto 0)
     );
 end entity gestion_position;
 
 architecture logic of gestion_position is
-    -- TO COMPLETE: Signals declaration
+    --| Signals |---------------------------------------------------------------
     signal reg_pres_s, reg_fut_s : unsigned(position'range);
     signal le_999_s , eq_999_s   : std_logic;
     signal gt_1999_s, eq_1999_s  : std_logic;
 
-    signal sub_carry_s              : std_logic;
-    signal cst_one_s                : unsigned(position'range);
-    signal reg_plus_minus_one_s     : unsigned(position'range);
+    signal sub_carry_s           : std_logic;
+    signal cst_one_s             : unsigned(position'range);
+    signal reg_plus_minus_one_s  : unsigned(position'range);
 
     signal center_out_limits_s      : std_logic;
-	 signal up_limit_s, down_limit_s : unsigned(position'range);
+    signal up_limit_s, down_limit_s : unsigned(position'range);
     signal loop_auto_mode_s         : unsigned(position'range);
 
-    --| Constants |------------------------------------------------------------
+    --| Constants |-------------------------------------------------------------
     constant LIMIT_UPPER_BOUND : unsigned(position'range) :=
 	                                         to_unsigned(1999, position'length);
     constant CENTER_VAL        : unsigned(position'range) :=
@@ -463,26 +459,26 @@ begin
     sub_carry_s <= down_i and (not up_i) and (not mode_i);
     cst_one_s   <= not to_unsigned(0, cst_one_s'length) when sub_carry_s = '1' else
                    to_unsigned( 1, cst_one_s'length);
-	 reg_plus_minus_one_s <= reg_pres_s + cst_one_s;
+    reg_plus_minus_one_s <= reg_pres_s + cst_one_s;
 	 
-	 -- In between signals
+    -- In between signals
     center_out_limits_s  <= center_i or le_999_s or gt_1999_s;
 	 
     loop_auto_mode_s <= LIMIT_LOWER_BOUND when eq_1999_s = '1' else
                         reg_plus_minus_one_s;
 	 
-    up_limit_s <= reg_pres_s              when eq_1999_s = '1' else
-	               reg_plus_minus_one_s;
+    up_limit_s <= reg_pres_s            when eq_1999_s = '1' else
+                  reg_plus_minus_one_s;
 						
-    down_limit_s <= reg_pres_s            when eq_999_s = '1' else
-	                 reg_plus_minus_one_s;
+    down_limit_s <= reg_pres_s          when eq_999_s = '1' else
+                    reg_plus_minus_one_s;
 						  
     -- Main separation of Futur States Decoder
     reg_fut_s <= CENTER_VAL       when center_out_limits_s = '1'  else
                  loop_auto_mode_s when mode_i = '1'               else
-					  up_limit_s       when up_i = '1'                 else
-					  down_limit_s     when down_i = '1'               else
-					  reg_pres_s;
+                 up_limit_s       when up_i = '1'                 else
+                 down_limit_s     when down_i = '1'               else
+                 reg_pres_s;
 
     -- D Flip-Flop / Register
     process(reset_i, clock_i)
@@ -491,13 +487,12 @@ begin
       if reset_i = '1' then
         reg_pres_s <= (others => '0');
       elsif rising_edge(clock_i) then
-		  if top_2ms_i = '1' then
-		    reg_pres_s <= reg_fut_s;
-		  end if;
+        if top_2ms_i = '1' then
+          reg_pres_s <= reg_fut_s;
+        end if;
       end if;
     end process;
     
-
     -- TO COMPLETE: Position output
     position <= std_logic_vector(reg_pres_s);
 
