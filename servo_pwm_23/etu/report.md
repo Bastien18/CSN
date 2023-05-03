@@ -137,6 +137,28 @@ Voici tout d'abord la liste des entrées et sortie de notre bloc gestion de posi
 
 \raggedright
 
+Les fonctions nécessaires sont :
+
+- asynchrone: reset
+
+- synchrone&nbsp;: un element mémoire pour le compteur précédent
+
+- synchrone&nbsp;:  un compteur/décompteur pour le temps de l'impulsion haute ($T_{on}$)*
+
+- synchrone&nbsp;: un rebouclement du compteur une fois arrivé au maximum de $T_{on}$ (pour le mode automatique)
+
+- synchrone&nbsp;: un détecteur des valeurs min et max de $T_{on}$ avec maintien de la valeur une fois arrivé (pour le mode manuel) ou chargement d'un $T_{on}$ correspondant à la position centrale si $T_{on}$ est hors min ou max
+
+_*Note: $T_{on}$ correspond à la valeur de notre compteur. Avec un minimum 1ms pour la valeur 999 et un maximum de 2ms pour 1999_ 
+
+Si l'on reprend la donnée du labo, on remarque qu'il est important de donner des priorités pour chaque fonction:
+
+1) Chargement pos. centrale si hors limite
+2) Chargement pos. centrale si center_i actif
+3) Boucle d'incrémentation si mode_i est actif (mode auto)
+4) Incrément jusqu'à $T_{on}$ max puis maintien si up_i actif
+5) Décrément jusqu'à $T_{on}$ min puis maintien si down_i
+
 Voici la table de fonctions synchrones:
 
 | center_i | mode_i | up_i | down_i | reg_pres | reg_fut | Commentaires |
