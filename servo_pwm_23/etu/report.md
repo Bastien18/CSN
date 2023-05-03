@@ -182,7 +182,7 @@ Un premier regroupement peut être effectuer, on obtient alors la table suivante
 | / | / | 1 | / | =1999 | =reg_pres | Maintien |
 | / | / | / | 1 | =999 | =reg_pres | Maintien |
 | / | / | / | 1 | autres | =reg_pres - 1 | Soustraction |
-| / | / | / | / | autres | =reg_pres + 1 | Incrément |
+| / | / | / | / | autres schema_bloc_part_pwm| =reg_pres + 1 | Incrément |
 
 L'addition et la soustraction peuvent être effectuer par le même bloc additionneur (pour une soustraction, on met le report d'entrée à '1' et on inverse le second nombre d'entrée).
 
@@ -196,6 +196,14 @@ On peut donc coupler ces états et terminer avec la table suivante:
 | / | / | 1 | / | =1999 | =reg_pres | Maintien |
 | / | / | / | 1 | =999 | =reg_pres | Maintien |
 | / | / | / | / | autres | =reg_pres "opération" 1 | Incrément/Soustraction |
+
+Schéma bloc de la gestion de position:
+
+\center
+
+![schema_bloc_gest_pos](./pics/Schema_bloc_gest_pos_BP.jpg){ width=70% }
+
+\raggedright
 
 # Réalisation et implantation
 
